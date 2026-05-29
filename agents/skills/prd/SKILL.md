@@ -1,304 +1,104 @@
 ---
 name: prd
-description: "Generate a Product Requirements Document (PRD) for a new feature. Use when planning a feature, starting a new project, or when asked to create a PRD. Triggers on: create a prd, write prd for, plan this feature, requirements for, spec out."
+description: "Create a concise PRD when written requirements are actually needed. Triggers on: create a prd, write prd, plan feature, requirements for."
 ---
 
-# PRD Generator
+# PRD / Feature Brief
 
-Create detailed Product Requirements Documents that are clear, actionable, and suitable for implementation.
+Use this skill only when a written requirements artifact will reduce risk.
 
----
+## First decide if a PRD is warranted
 
-## The Job
+Write `docs/features/{feature}/prd.md` when:
+- the user explicitly asks for a PRD or written requirements,
+- the work is large, risky, or ambiguous,
+- the feature spans multiple user stories or stakeholders,
+- or a later design/task handoff needs a durable brief.
 
-1. Receive a feature description from the user
-2. Ask 3-5 essential clarifying questions (with lettered options)
-3. Generate a structured PRD based on answers
-4. Save to `/tasks/prd-[feature-name].md`
+Skip the PRD and recommend a lighter path when:
+- the change is small or bounded,
+- scope is already clear,
+- or a short plan in chat is enough.
 
-**Important:** Do NOT start implementing. Just create the PRD.
-
----
-
-## Step 1: Clarifying Questions
-
-Ask only critical questions where the initial prompt is ambiguous. Focus on:
-
-- **Problem/Goal:** What problem does this solve?
-- **Core Functionality:** What are the key actions?
-- **Scope/Boundaries:** What should it NOT do?
-- **Success Criteria:** How do we know it's done?
-
-### Format Questions Like This:
-
-```
-1. What is the primary goal of this feature?
-   A. Improve user onboarding experience
-   B. Increase user retention
-   C. Reduce support burden
-   D. Other: [please specify]
-
-2. Who is the target user?
-   A. New users only
-   B. Existing users only
-   C. All users
-   D. Admin users only
-
-3. What is the scope?
-   A. Minimal viable version
-   B. Full-featured implementation
-   C. Just the backend/API
-   D. Just the UI
-```
-
-This lets users respond with "1A, 2C, 3B" for quick iteration.
+If you skip it, say so explicitly and suggest the next step (`investigate + plan`, `create tasks`, or implement directly).
 
 ---
 
-## Step 2: PRD Structure
+## Process
 
-Generate the PRD with these sections:
+1. **Clarify only what matters** — Ask only questions that change scope, constraints, or verification.
+2. **Explore** — Search the codebase for relevant patterns, modules, and prior art.
+3. **Define success** — Capture goals, constraints, and verification clearly.
+4. **Write** — Generate a concise PRD.
+5. **Save** — `docs/features/{feature}/prd.md`
 
-### 1. Introduction/Overview
+Skip or compress steps when the answer is already obvious.
 
-Brief description of the feature and the problem it solves.
+---
 
-### 2. Goals
-
-Specific, measurable objectives (bullet list).
-
-### 3. User Stories
-
-Each story needs:
-
-- **Title:** Short descriptive name
-- **Description:** "As a [user], I want [feature] so that [benefit]"
-- **Acceptance Criteria:** Verifiable checklist of what "done" means
-
-Each story should be small enough to implement in one focused session.
-
-**Format:**
+## Template
 
 ```markdown
-### US-001: [Title]
+# PRD: {Feature Name}
 
-**Description:** As a [user], I want [feature] so that [benefit].
+## Problem
 
-**BDD Spec:**
-- Given: [precondition/context]
-- When: [action taken]
-- Then: [expected outcome]
-
-**Acceptance Criteria:**
-
-- [ ] Specific verifiable criterion
-- [ ] Another criterion
-- [ ] npm run typecheck passes
-- [ ] **[UI stories only]** Verify in browser using agent-browser skill
-```
-
-**Important:**
-
-- Acceptance criteria must be verifiable, not vague. "Works correctly" is bad. "Button shows confirmation dialog before deleting" is good.
-- **For any story with UI changes:** Always include "Verify in browser using dev-browser skill" as acceptance criteria. This ensures visual verification of frontend work.
-
-### 4. Functional Requirements
-
-Numbered list of specific functionalities:
-
-- "FR-1: The system must allow users to..."
-- "FR-2: When a user clicks X, the system must..."
-
-Be explicit and unambiguous.
-
-### 5. Non-Goals (Out of Scope)
-
-What this feature will NOT include. Critical for managing scope.
-
-### 6. Design Considerations (Optional)
-
-- UI/UX requirements
-- Link to mockups if available
-- Relevant existing components to reuse
-
-### 7. Technical Considerations (Optional)
-
-- Known constraints or dependencies
-- Integration points with existing systems
-- Performance requirements
-
-### 8. Success Metrics
-
-How will success be measured?
-
-- "Reduce time to complete X by 50%"
-- "Increase conversion rate by 10%"
-
-### 9. Open Questions
-
-Remaining questions or areas needing clarification.
-
----
-
-## Writing for Junior Developers
-
-The PRD reader may be a junior developer or AI agent. Therefore:
-
-- Be explicit and unambiguous
-- Avoid jargon or explain it
-- Provide enough detail to understand purpose and core logic
-- Number requirements for easy reference
-- Use concrete examples where helpful
-
----
-
-## Output
-
-- **Format:** Markdown (`.md`)
-- **Location:** `/tasks/`
-- **Filename:** `prd-[feature-name].md` (kebab-case)
-
----
-
-## Example PRD
-
-```markdown
-# PRD: Task Priority System
-
-## Introduction
-
-Add priority levels to tasks so users can focus on what matters most. Tasks can be marked as high, medium, or low priority, with visual indicators and filtering to help users manage their workload effectively.
+What problem are we solving? 2-3 sentences max.
 
 ## Goals
 
-- Allow assigning priority (high/medium/low) to any task
-- Provide clear visual differentiation between priority levels
-- Enable filtering and sorting by priority
-- Default new tasks to medium priority
+- Goal 1
+- Goal 2
+
+## Scope
+
+### In
+- What this change includes
+
+### Out
+- What this change does not include
 
 ## User Stories
 
-### US-001: Add priority field to database
+Include only if they help clarify behavior.
 
-**Description:** As a developer, I need to store task priority so it persists across sessions.
+### US-001: {Title}
 
-**BDD Spec:**
-- Given: The tasks table exists
-- When: A new task is created without specifying priority
-- Then: The task is saved with priority 'medium'
+**As a** {actor}, **I want** {capability}, **so that** {benefit}.
 
 **Acceptance Criteria:**
+- [ ] Specific, verifiable criterion
+- [ ] Another criterion
 
-- [ ] Add priority column to tasks table: 'high' | 'medium' | 'low' (default 'medium')
-- [ ] Generate and run migration successfully
-- [ ] npm run typecheck passes
+## Constraints / Dependencies
 
-### US-002: Display priority indicator on task cards
+- Technical, product, or operational constraints
+- Existing contracts that must be preserved
 
-**Description:** As a user, I want to see task priority at a glance so I know what needs attention first.
+## Verification
 
-**BDD Spec:**
-- Given: A task with priority 'high' exists
-- When: The task list is displayed
-- Then: The task shows a red priority badge with 🔴 icon
-
-**Acceptance Criteria:**
-
-- [ ] Each task card shows colored priority badge (red=high, yellow=medium, gray=low)
-- [ ] Badge includes icon: 🔴 high, 🟡 medium, ⚪ low
-- [ ] Priority visible without hovering or clicking
-- [ ] npm run typecheck passes
-- [ ] Verify in browser using agent-browser skill
-
-### US-003: Add priority selector to task edit
-
-**Description:** As a user, I want to change a task's priority when editing it.
-
-**BDD Spec:**
-- Given: A task edit modal is open
-- When: I select 'high' from the priority dropdown
-- Then: The task priority is saved as 'high'
-
-**Acceptance Criteria:**
-
-- [ ] Priority dropdown in task edit modal
-- [ ] Shows current priority as selected
-- [ ] Saves immediately on selection change
-- [ ] npm run typecheck passes
-- [ ] Verify in browser using agent-browser skill
-
-### US-004: Filter tasks by priority
-
-**Description:** As a user, I want to filter the task list to see only high-priority items when I'm focused.
-
-**BDD Spec:**
-- Given: Tasks with mixed priorities exist
-- When: I select 'High' from the priority filter
-- Then: Only high-priority tasks are displayed
-
-**Acceptance Criteria:**
-
-- [ ] Filter dropdown with options: All | High | Medium | Low
-- [ ] Filter persists in URL params
-- [ ] Empty state message when no tasks match filter
-- [ ] npm run typecheck passes
-- [ ] Verify in browser using agent-browser skill
-
-## Functional Requirements
-
-- FR-1: Add `priority` field to tasks table ('high' | 'medium' | 'low', default 'medium')
-- FR-2: Display colored priority badge on each task card
-- FR-3: Include priority selector in task edit modal
-- FR-4: Add priority filter dropdown to task list header
-- FR-5: Sort by priority within each status column (high → medium → low)
-
-## Non-Goals
-
-- No priority-based notifications or reminders
-- No automatic priority assignment based on due date
-- No priority inheritance for subtasks
-
-## Technical Considerations
-
-- Reuse existing badge component with color variants
-- Filter state managed via URL search params
-- Priority stored in database, not computed
-
-## Success Metrics
-
-- Users can change priority in <2 clicks
-- High-priority tasks immediately visible at top of lists
-- No regression in task list performance
+- Automated checks to run
+- Manual scenarios to verify
 
 ## Open Questions
 
-- Should priority affect task ordering within a column?
-- Should we add keyboard shortcuts for priority changes?
+- [ ] Unresolved decision needing input
 ```
 
 ---
 
-## Checklist
+## Guidelines
 
-Before saving the PRD:
-
-- [ ] Asked clarifying questions with lettered options
-- [ ] Incorporated user's answers
-- [ ] User stories are small and specific (one behavior each)
-- [ ] Each user story has BDD spec (Given/When/Then)
-- [ ] Functional requirements are numbered and unambiguous
-- [ ] Non-goals section defines clear boundaries
-- [ ] Saved to `/tasks/prd-[feature-name].md`
+- **Concise over comprehensive** — This is a brief, not a spec dump
+- **Ask less, but ask the right things** — only questions that change the outcome
+- **Prefer constraints and verification over prose**
+- **No file-by-file tours** — describe responsibilities and boundaries instead
+- **Leave architecture to design** — unless the user explicitly wants it here
 
 ---
 
 ## Next Step
 
-After PRD is approved, convert user stories to executable tasks using Beads:
-
-```bash
-bd add "[Feature Name]" --desc "Parent task for [feature]"
-bd add "[US-001 title]" --parent <parent-id> --desc "[full BDD spec + test plan]"
-```
-
-Or say **"set up ralph"** to interactively create tasks with proper dependencies, BDD specs, and test plans.
+After the PRD is approved:
+- If meaningful technical tradeoffs remain, say **"create design"**
+- Otherwise, say **"create tasks"** or implement directly
