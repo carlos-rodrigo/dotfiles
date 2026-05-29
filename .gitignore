@@ -8,3 +8,6 @@
 
 # Secrets (add any sensitive files here)
 *.local
+
+# Agent skills live in ~/.agents (git@github.com:carlos-rodrigo/agents-md.git)
+/agents/
